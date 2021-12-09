@@ -22,6 +22,7 @@ public class StudentServiceImpl implements StudentService {
 		if (studentRepository.findById(studentCredentialsDto.getId()) != null) {
 			return false;
 		}
+		
 		Student student = new Student(studentCredentialsDto.getId(), studentCredentialsDto.getName(),
 				studentCredentialsDto.getPassword());
 		studentRepository.save(student);
