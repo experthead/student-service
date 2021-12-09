@@ -13,8 +13,8 @@ import telran.b7a.student.model.Student;
 
 @Service
 public class StudentServiceImpl implements StudentService {
-	
-	@Autowired //if no NUll pointer exception
+
+	@Autowired // if no NUll pointer exception
 	StudentRepository studentRepository; // что их связывает!!!!!
 
 	@Override
@@ -39,20 +39,34 @@ public class StudentServiceImpl implements StudentService {
 
 	@Override
 	public StudentDto deleteStudent(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
+		Student victumStudent = studentRepository.deleteById(id);
+		if (victumStudent == null) {
+			return null;
+		}
+		return StudentDto.builder().id(victumStudent.getId()).name(victumStudent.getName())
+				.scores(victumStudent.getScores()).build();
+
 	}
 
 	@Override
 	public StudentCredentialsDto updateStudent(Integer id, UpdateStudentDto updateStudentDto) {
-		// TODO Auto-generated method stub
-		return null;
+		Student studentForUpdate = studentRepository.findById(id);
+		if (studentForUpdate == null) {
+			return null;
+		}
+		studentForUpdate.setPassword(updateStudentDto.getPassword());
+		return StudentCredentialsDto.builder().id(studentForUpdate.getId()).name(studentForUpdate.getName())
+				.password(studentForUpdate.getPassword()).build();
 	}
 
 	@Override
 	public boolean addScore(Integer id, ScoreDto scoreDto) {
-		// TODO Auto-generated method stub
-		return false;
+		Student studentForUpdate = studentRepository.findById(id);
+		if (studentForUpdate == null) {
+			return false;
+		}
+		studentForUpdate.addScore(scoreDto.getExamName(), scoreDto.getScore());
+		return true;
 	}
 
 }

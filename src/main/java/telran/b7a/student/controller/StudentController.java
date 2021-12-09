@@ -35,7 +35,7 @@ public class StudentController {
 	
 	@DeleteMapping("/student/{id}")
 	public StudentDto removeStudent(@PathVariable Integer id) {
-		return studentService.findStudent(id);
+		return studentService.deleteStudent(id);
 	}
 	
 	@PutMapping("/student/{id}")
