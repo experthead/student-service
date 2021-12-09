@@ -1,7 +1,6 @@
 package telran.b7a.student.controller;
 
-import javax.websocket.server.PathParam;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +17,8 @@ import telran.b7a.student.service.StudentService;
 
 @RestController
 public class StudentController {
-
+	
+	@Autowired
 	StudentService studentService;  //methods include here ---> StudentService.java
 	
 	@PostMapping("/student")
@@ -43,7 +43,7 @@ public class StudentController {
 		return studentService.updateStudent(id, updateStudentDto);
 		
 	}
-	@PutMapping("/student/{id}")
+	@PutMapping("/score/student/{id}")
 	public boolean addScore(@PathVariable Integer id, @RequestBody ScoreDto scoreDto) {
 		return studentService.addScore(id, scoreDto);
 		
