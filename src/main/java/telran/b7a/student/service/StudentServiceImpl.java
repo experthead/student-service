@@ -66,8 +66,7 @@ public class StudentServiceImpl implements StudentService {
 		if (studentForUpdate == null) {
 			return false;
 		}
-		studentForUpdate.addScore(scoreDto.getExamName(), scoreDto.getScore());
-		return true;
+		return studentForUpdate.addScore(scoreDto.getExamName(), scoreDto.getScore());
 	}
 
 }
