@@ -12,7 +12,7 @@ import telran.b7a.student.model.Student;
 public class StudentRepositoryImpl implements StudentRepository {
 	
 	Map<Integer, Student> students = 
-			new ConcurrentHashMap<>(); //MULTI THREDING !!!!!! DON'T FOGET in DB solved multiThreding problems
+			new ConcurrentHashMap<>(); //MULTI THREDING !!!!!! DON'T FOGET in DB already solved multiThreding problems
 
 	@Override
 	public Student save(Student student) {

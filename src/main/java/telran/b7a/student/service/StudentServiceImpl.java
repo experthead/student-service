@@ -1,9 +1,12 @@
 package telran.b7a.student.service;
 
+import java.util.HashMap;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import lombok.Builder;
 import telran.b7a.student.dao.StudentRepository;
 import telran.b7a.student.dto.ScoreDto;
 import telran.b7a.student.dto.StudentCredentialsDto;
@@ -22,9 +25,13 @@ public class StudentServiceImpl implements StudentService {
 		if (studentRepository.findById(studentCredentialsDto.getId()) != null) {
 			return false;
 		}
+
+//		Student student = new Student(studentCredentialsDto.getId(), studentCredentialsDto.getName(),
+//				studentCredentialsDto.getPassword());
 		
-		Student student = new Student(studentCredentialsDto.getId(), studentCredentialsDto.getName(),
-				studentCredentialsDto.getPassword());
+		Student student = Student.builder().id(studentCredentialsDto.getId()).name(studentCredentialsDto.getName())
+				.password(studentCredentialsDto.getPassword()).scores(new HashMap<String, Integer>()).build();
+
 		studentRepository.save(student);
 		return true;
 	}
@@ -55,6 +62,7 @@ public class StudentServiceImpl implements StudentService {
 		if (studentForUpdate == null) {
 			return null;
 		}
+		studentForUpdate.setName(updateStudentDto.getName());
 		studentForUpdate.setPassword(updateStudentDto.getPassword());
 		return StudentCredentialsDto.builder().id(studentForUpdate.getId()).name(studentForUpdate.getName())
 				.password(studentForUpdate.getPassword()).build();
