@@ -12,6 +12,7 @@ import telran.b7a.student.dto.ScoreDto;
 import telran.b7a.student.dto.StudentCredentialsDto;
 import telran.b7a.student.dto.StudentDto;
 import telran.b7a.student.dto.UpdateStudentDto;
+import telran.b7a.student.dto.exeptions.StudentNotFoundExeption;
 import telran.b7a.student.model.Student;
 
 @Service
@@ -22,13 +23,13 @@ public class StudentServiceImpl implements StudentService {
 
 	@Override
 	public boolean addStudent(StudentCredentialsDto studentCredentialsDto) {
-		if (studentRepository.findById(studentCredentialsDto.getId()) != null) {
+		if (studentRepository.findById(studentCredentialsDto.getId()).isPresent()) { //????
 			return false;
 		}
 
 //		Student student = new Student(studentCredentialsDto.getId(), studentCredentialsDto.getName(),
 //				studentCredentialsDto.getPassword());
-		
+
 		Student student = Student.builder().id(studentCredentialsDto.getId()).name(studentCredentialsDto.getName())
 				.password(studentCredentialsDto.getPassword()).scores(new HashMap<String, Integer>()).build();
 
@@ -38,15 +39,17 @@ public class StudentServiceImpl implements StudentService {
 
 	@Override
 	public StudentDto findStudent(Integer id) {
-		Student student = studentRepository.findById(id);
-		if (student == null) {
-			return null;
-		}
-		return StudentDto.builder().id(student.getId()).name(student.getName()).scores(student.getScores()).build();
+		Student student = studentRepository.findById(id).orElseThrow(() -> new StudentNotFoundExeption(id));
+		
+		return StudentDto.builder()
+				.id(student.getId())
+				.name(student.getName())
+				.scores(student.getScores())
+				.build();
 	}
 
 	@Override
-	public StudentDto deleteStudent(Integer id) {
+	public StudentDto deleteStudent(Integer id) { //use ternary operators !!!!!!
 		Student victumStudent = studentRepository.deleteById(id);
 		if (victumStudent == null) {
 			return null;
@@ -58,10 +61,8 @@ public class StudentServiceImpl implements StudentService {
 
 	@Override
 	public StudentCredentialsDto updateStudent(Integer id, UpdateStudentDto updateStudentDto) {
-		Student studentForUpdate = studentRepository.findById(id);
-		if (studentForUpdate == null) {
-			return null;
-		}
+		Student studentForUpdate = studentRepository.findById(id).orElseThrow(() -> new StudentNotFoundExeption(id));
+		
 		studentForUpdate.setName(updateStudentDto.getName());
 		studentForUpdate.setPassword(updateStudentDto.getPassword());
 		return StudentCredentialsDto.builder().id(studentForUpdate.getId()).name(studentForUpdate.getName())
@@ -70,10 +71,9 @@ public class StudentServiceImpl implements StudentService {
 
 	@Override
 	public boolean addScore(Integer id, ScoreDto scoreDto) {
-		Student studentForUpdate = studentRepository.findById(id);
-		if (studentForUpdate == null) {
-			return false;
-		}
+		Student studentForUpdate = studentRepository.findById(id)
+													.orElseThrow(() -> new StudentNotFoundExeption(id));
+
 		return studentForUpdate.addScore(scoreDto.getExamName(), scoreDto.getScore());
 	}
 
