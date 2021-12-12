@@ -18,11 +18,17 @@ import telran.b7a.student.model.Student;
 @Service
 public class StudentServiceImpl implements StudentService {
 
-	@Autowired // if no NUll pointer exception
+	
 	StudentRepository studentRepository; // что их связывает!!!!!
 
-	@Autowired
 	ModelMapper modelMapper;
+	
+	
+	@Autowired
+	public StudentServiceImpl(StudentRepository studentRepository, ModelMapper modelMapper) {
+		this.studentRepository = studentRepository;
+		this.modelMapper = modelMapper;
+	}
 
 	@Override
 	public boolean addStudent(StudentCredentialsDto studentCredentialsDto) {
