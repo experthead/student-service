@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import telran.b7a.student.dao.StudentRepository;
+import telran.b7a.student.dao.StudentsMongoRepository;
 import telran.b7a.student.dto.ScoreDto;
 import telran.b7a.student.dto.StudentCredentialsDto;
 import telran.b7a.student.dto.StudentDto;
@@ -19,15 +20,16 @@ import telran.b7a.student.model.Student;
 public class StudentServiceImpl implements StudentService {
 
 	
-	StudentRepository studentRepository; // что их связывает!!!!!
+	StudentsMongoRepository studentRepository; // что их связывает!!!!!
 
 	ModelMapper modelMapper;
 	
 	
 	@Autowired
-	public StudentServiceImpl(StudentRepository studentRepository, ModelMapper modelMapper) {
+	public StudentServiceImpl(StudentsMongoRepository studentRepository, ModelMapper modelMapper) {
 		this.studentRepository = studentRepository;
 		this.modelMapper = modelMapper;
+		
 	}
 
 	@Override
@@ -82,7 +84,9 @@ public class StudentServiceImpl implements StudentService {
 	public boolean addScore(Integer id, ScoreDto scoreDto) {
 		Student studentForUpdate = studentRepository.findById(id).orElseThrow(() -> new StudentNotFoundExeption(id));
 
-		return studentForUpdate.addScore(scoreDto.getExamName(), scoreDto.getScore());
+		boolean res = studentForUpdate.addScore(scoreDto.getExamName(), scoreDto.getScore());
+		studentRepository.save(studentForUpdate);
+		return res;
 	}
 
 	@Override
