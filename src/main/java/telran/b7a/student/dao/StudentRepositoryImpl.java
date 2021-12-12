@@ -1,5 +1,7 @@
 package telran.b7a.student.dao;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,9 +13,9 @@ import telran.b7a.student.model.Student;
 
 @Repository
 public class StudentRepositoryImpl implements StudentRepository {
-	
-	Map<Integer, Student> students = 
-			new ConcurrentHashMap<>(); //MULTI THREDING !!!!!! DON'T FOGET in DB already solved multiThreding problems
+
+	Map<Integer, Student> students = new ConcurrentHashMap<>(); // MULTI THREDING !!!!!! DON'T FOGET in DB already
+																// solved multiThreding problems
 
 	@Override
 	public Student save(Student student) {
@@ -29,6 +31,12 @@ public class StudentRepositoryImpl implements StudentRepository {
 	@Override
 	public Student deleteById(int id) {
 		return students.remove(id);
+	}
+
+	@Override
+	public List<Student> findAll() {
+
+		return new ArrayList<>(students.values());
 	}
 
 }

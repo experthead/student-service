@@ -1,12 +1,12 @@
 package telran.b7a.student.service;
 
-import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import lombok.Builder;
 import telran.b7a.student.dao.StudentRepository;
 import telran.b7a.student.dto.ScoreDto;
 import telran.b7a.student.dto.StudentCredentialsDto;
@@ -21,17 +21,22 @@ public class StudentServiceImpl implements StudentService {
 	@Autowired // if no NUll pointer exception
 	StudentRepository studentRepository; // что их связывает!!!!!
 
+	@Autowired
+	ModelMapper modelMapper;
+
 	@Override
 	public boolean addStudent(StudentCredentialsDto studentCredentialsDto) {
-		if (studentRepository.findById(studentCredentialsDto.getId()).isPresent()) { //????
+		if (studentRepository.findById(studentCredentialsDto.getId()).isPresent()) { // ????
 			return false;
 		}
+
+		Student student = modelMapper.map(studentCredentialsDto, Student.class);
 
 //		Student student = new Student(studentCredentialsDto.getId(), studentCredentialsDto.getName(),
 //				studentCredentialsDto.getPassword());
 
-		Student student = Student.builder().id(studentCredentialsDto.getId()).name(studentCredentialsDto.getName())
-				.password(studentCredentialsDto.getPassword()).scores(new HashMap<String, Integer>()).build();
+//		Student student = Student.builder().id(studentCredentialsDto.getId()).name(studentCredentialsDto.getName())
+//				.password(studentCredentialsDto.getPassword()).scores(new HashMap<String, Integer>()).build();
 
 		studentRepository.save(student);
 		return true;
@@ -40,41 +45,47 @@ public class StudentServiceImpl implements StudentService {
 	@Override
 	public StudentDto findStudent(Integer id) {
 		Student student = studentRepository.findById(id).orElseThrow(() -> new StudentNotFoundExeption(id));
-		
-		return StudentDto.builder()
-				.id(student.getId())
-				.name(student.getName())
-				.scores(student.getScores())
-				.build();
+
+//		return StudentDto.builder()
+//							.id(student.getId())
+//							.name(student.getName())
+//							.scores(student.getScores())
+//							.build();
+		return modelMapper.map(student, StudentDto.class);
 	}
 
 	@Override
-	public StudentDto deleteStudent(Integer id) { //use ternary operators !!!!!!
-		Student victumStudent = studentRepository.deleteById(id);
-		if (victumStudent == null) {
-			return null;
-		}
-		return StudentDto.builder().id(victumStudent.getId()).name(victumStudent.getName())
-				.scores(victumStudent.getScores()).build();
+	public StudentDto deleteStudent(Integer id) { // use ternary operators !!!!!!
+		Student student = studentRepository.findById(id).orElseThrow(() -> new StudentNotFoundExeption(id));
+		studentRepository.deleteById(id);
+
+		return modelMapper.map(student, StudentDto.class);
 
 	}
 
 	@Override
 	public StudentCredentialsDto updateStudent(Integer id, UpdateStudentDto updateStudentDto) {
 		Student studentForUpdate = studentRepository.findById(id).orElseThrow(() -> new StudentNotFoundExeption(id));
-		
+
 		studentForUpdate.setName(updateStudentDto.getName());
 		studentForUpdate.setPassword(updateStudentDto.getPassword());
-		return StudentCredentialsDto.builder().id(studentForUpdate.getId()).name(studentForUpdate.getName())
-				.password(studentForUpdate.getPassword()).build();
+		return modelMapper.map(studentForUpdate, StudentCredentialsDto.class);
 	}
 
 	@Override
 	public boolean addScore(Integer id, ScoreDto scoreDto) {
-		Student studentForUpdate = studentRepository.findById(id)
-													.orElseThrow(() -> new StudentNotFoundExeption(id));
+		Student studentForUpdate = studentRepository.findById(id).orElseThrow(() -> new StudentNotFoundExeption(id));
 
 		return studentForUpdate.addScore(scoreDto.getExamName(), scoreDto.getScore());
+	}
+
+	@Override
+	public List<StudentDto> findStudentsByName(String name) {
+
+		return studentRepository.findAll().stream()
+				.filter(s -> name.equalsIgnoreCase(s.getName())) //look for MethodReference
+				.map(s -> modelMapper.map(s, StudentDto.class))
+				.collect(Collectors.toList());
 	}
 
 }

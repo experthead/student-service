@@ -1,5 +1,7 @@
 package telran.b7a.student.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,39 +19,44 @@ import telran.b7a.student.service.StudentService;
 
 @RestController
 public class StudentController {
-	
+
 	@Autowired
-	StudentService studentService;  //methods include here ---> StudentService.java
-	
+	StudentService studentService; // methods include here ---> StudentService.java
+
 	@PostMapping("/student")
 	public boolean studentRegister(@RequestBody StudentCredentialsDto studentCredentialsDto) {
-			return studentService.addStudent(studentCredentialsDto);
+		return studentService.addStudent(studentCredentialsDto);
 
 	}
-	
+
 	@GetMapping("/student/{id}")
 	public StudentDto findStudentById(@PathVariable("id") Integer studentid) {
 		return studentService.findStudent(studentid);
-		
+
 	}
-	
+
 	@DeleteMapping("/student/{id}")
 	public StudentDto removeStudent(@PathVariable Integer id) {
 		return studentService.deleteStudent(id);
 	}
-	
+
 	@PutMapping("/student/{id}")
 	public StudentCredentialsDto editStudent(@PathVariable Integer id, @RequestBody UpdateStudentDto updateStudentDto) {
 		return studentService.updateStudent(id, updateStudentDto);
-		
+
 	}
+
 	@PutMapping("/score/student/{id}")
 	public boolean addScore(@PathVariable Integer id, @RequestBody ScoreDto scoreDto) {
 		return studentService.addScore(id, scoreDto);
-		
+
 	}
-	
-	
+
+	@GetMapping("students/name/{name}")
+	public List<StudentDto> findStudentByName(@PathVariable String name) {
+		return studentService.findStudentsByName(name);
+
+	}
 	
 	
 

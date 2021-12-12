@@ -22,7 +22,7 @@ public class Student {
 	@Setter
 	String name;
 	@Setter String password; //another style
-	Map<String, Integer> scores;
+	Map<String, Integer> scores = new HashMap<>();
 	
 	
 //	public Student(int id, String name, String password) {
