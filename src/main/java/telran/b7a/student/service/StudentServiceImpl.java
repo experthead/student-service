@@ -91,8 +91,19 @@ public class StudentServiceImpl implements StudentService {
 	@Override
 	public List<StudentDto> findStudentsByName(String name) {
 
-		return studentRepository.findAll().stream()
-				.filter(s -> name.equalsIgnoreCase(s.getName())) //look for MethodReference
+		return studentRepository.findByNameIgnoreCase(name.toLowerCase()) //look for docs https://docs.spring.io/spring-data/mongodb/docs/current/reference/html/#mongodb.repositories.queries
+				.map(s -> modelMapper.map(s, StudentDto.class))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public long getStudentsNameQuantity(List<String> names) {
+		return studentRepository.countByNameInIgnoreCase(names);
+	}
+
+	@Override
+	public List<StudentDto> getStudentsByExamScore(String exam, int score) {
+		return studentRepository.findByExamAndScoreGreaterEqualsThan(exam, score) //look for docs https://docs.spring.io/spring-data/mongodb/docs/current/reference/html/#mongodb.repositories.queries
 				.map(s -> modelMapper.map(s, StudentDto.class))
 				.collect(Collectors.toList());
 	}

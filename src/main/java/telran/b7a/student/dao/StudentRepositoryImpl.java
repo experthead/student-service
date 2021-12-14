@@ -35,7 +35,6 @@ public class StudentRepositoryImpl implements StudentRepository {
 
 	@Override
 	public List<Student> findAll() {
-
 		return new ArrayList<>(students.values());
 	}
 
